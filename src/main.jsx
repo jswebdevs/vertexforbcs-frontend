@@ -5,6 +5,6 @@ import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <h2>This is starting</h2>
+    <h2>This is starting. Siyam kisui kore nai.</h2>
   </StrictMode>,
 )
