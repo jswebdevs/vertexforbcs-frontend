@@ -1,0 +1,60 @@
+.calendar-container {
+  max-width: 500px; /* Set maximum width */
+  margin: 0 auto; /* Center the calendar horizontally */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center children vertically */
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.calendar-date {
+  width: 50px; /* Set width to 50px */
+  height: 40px; /* Set height to 40px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc; /* Common border */
+  position: relative; /* For tooltip positioning */
+  margin: 0; /* Ensure no margin */
+  padding: 0; /* Ensure no padding */
+}
+
+.past-quiz-date {
+  background-color: #6A6C6D; /* Gray */
+}
+
+.upcoming-quiz-date {
+  background-color: #f44336; /* Red */
+}
+
+.quiz-date {
+  background-color: #4caf50; /* Green */
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 columns for the week */
+  gap: 0; /* No space between cells */
+}
+
+.calendar-empty {
+  width: 50px; /* Match date box */
+  height: 40px; /* Match date box */
+}
+.tooltip {
+  position: absolute;
+  background-color: white; /* White background */
+  color: green; /* Green text color */
+  padding: 5px 10px;
+  border: 1px solid green; /* Green border */
+  border-radius: 5px;
+  z-index: 1000; /* Make sure it's above other elements */
+  white-space: pre-wrap; /* Preserve line breaks in content */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+}

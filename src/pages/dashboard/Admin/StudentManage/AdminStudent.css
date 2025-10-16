@@ -1,0 +1,15 @@
+.table {
+  border-collapse: collapse; /* Ensure borders are collapsed into a single border */
+  width: 100%; /* Optional: Set table width */
+}
+
+.table, .table th, .table td {
+  border: 0.1px solid #FFF; /* Set the border color to black (or any color you prefer) */
+}
+
+.table th, .table td {
+  padding: 8px; /* Optional: Add padding for better spacing */
+  text-align: left; /* Optional: Align text to the left */
+}
+
+/* Optional: Add hover effect for rows */

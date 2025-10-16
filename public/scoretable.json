@@ -1,0 +1,14 @@
+[
+    {
+        "quizid" : 1,
+        "quizTitle": "Jarir",
+        "scores": [
+            {
+                "studentid": "",
+                "studentfirstName" : "Jair",
+                "studentlastName" : "Ahmed",
+                "score" : 40 
+            }
+        ] 
+    }
+]

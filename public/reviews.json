@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "text": "আলহামদুলিল্লাহ। সুলভমূল্যে এত ভালো সেবা বাংলাদেশের অন্য কোন কোচিং এ আছে কি না আমার জানা নাই। আল্লাহর রহমতে আমি বর্তমানে বাংলাদেশ রেলওয়ে তে জব করছি। তবুও কোচিং কন্টিনিউ করতেছি যাতে আরো ভালো কোন চাকরি পাই।",
+    "image": "/reviews/karima.webp",
+    "name": "Karima Akter",
+    "designation": "Student\nRajshahi Polytechnic School"
+  },
+  {
+    "id": 2,
+    "text": "VERTEX for BCS মানেই সাধ্যের মধ্যে অথচ শ্রেষ্ঠ পাঠদান পরিকল্পনা।",
+    "image": "/reviews/nidhi.webp",
+    "name": "Nidhi Das",
+    "designation": "Housewife\nOwn House"
+  },
+  {
+    "id": 3,
+    "text": "ভারটেক্স রাজশাহীর মধ্যে সবথেকে একটি কম খরচে ভালো সেবা মানের প্রতিষ্ঠান",
+    "image": "/reviews/sumisarkar.webp",
+    "name": "Sumi Sarkar",
+    "designation": "Assistant Teacher\nChampaknagar High school"
+  },
+  {
+    "id": 4,
+    "text": "আলহামদুলিল্লাহ সাধ্যের মধ্যে ভালো পাঠদান।এভাবে আমাদের পাশে থাকার জন্য ধন্যবাদ।.",
+    "image": "/reviews/sharmilisumi.webp",
+    "name": "Sharmili Sumi",
+    "designation": "Student\nMadar Bux College, Rajshahi."
+  },
+  {
+    "id": 5,
+    "text": "ভার্টেক্স মানেই গরীবের বন্ধ, স্টুডেন্টের বন্ধু। এই কোচিং এ এত কম টাকায় যেসকল সুযোগ সুবিধা পাওয়া যায় এবং সময় অনুযায়ী প্রস্তুতি সম্পন্ন করে বেকাররাও আত্মনির্ভরশীল হয় যা অন্য কোন কোন কোচিং এ সম্ভব নয়।",
+    "image": "/reviews/boy.webp",
+    "name": "Muslem Khtun Musi",
+    "designation": "Student\nRajshahi College"
+  },
+  {
+    "id": 6,
+    "text": "আলহামদুলিল্লাহ ভারটেক্সের সার্ভিস খুবই ভাল।দোয়া করি ভারটেক্স আরো সামনে এগিয়ে যাক। ৩০০ টাকা এরকম কোচিং, আমি কোথাও দেখিনি এখন পর্যন্ত, শুনতেও পাইনি।",
+    "image": "/reviews/tuhin.webp",
+    "name": "Waziullah Tuhin",
+    "designation": "BCS Applicant"
+  },
+  {
+    "id": 7,
+    "text": "আপনাদের জন্য শুভকামনা রইল।আমার জীবনে এই কোচিং এর অনেক অবদান রয়েছে। আপনাদের পরীক্ষা গুলোর মান খুব ভালো।",
+    "image": "/reviews/tjmul.webp",
+    "name": "Tajemul Hoque",
+    "designation": "Assistant Teacher\nGovernment Primary School"
+  },
+  {
+    "id": 8,
+    "text": "Alhamdulillah onek valo.r jodi amar bandhobira bole kon coaching ta valo? Amar mathai prothome vertex er kothai ase.eto kom takai eto valo seba pawa somvob e na. tai tader ke boli vertex a vorti howar jonno.",
+    "image": "/reviews/girl.webp",
+    "name": "Khatija Khatun",
+    "designation": "Student\nNursing College"
+  },
+  {
+    "id": 9,
+    "text": "khub valo kom khoroche sei 2014 theke 300 korei cholche!ami onk kritoggo protisthaner proti. taka charai amake bes koyek mas sujog kore dewa hoyechilo.ami bortomane akta govt job a achi.",
+    "image": "/reviews/shawon.webp",
+    "name": "Mofrurul Jannat Shawon",
+    "designation": "Accounting Assistant\nRajshahi DC Office"
+  }
+]

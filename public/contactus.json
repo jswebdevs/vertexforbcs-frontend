@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "icon" : "/image/call.png",
+        "title" : "Call Us",
+        "value" : "01722-958800",
+        "link": "tel:01722958800"
+    },
+    {
+      "id": 2,
+      "icon": "/image/email.png",
+      "title": "Mail Us",
+      "value": "info@vartexforbcs.com",
+      "link": "mailto:info@vartexforbcs.com"
+    },
+    {
+      "id": 3,
+      "icon": "/image/location.png",
+      "title": "Office Address",
+      "value": "Loknath School Market ( 1st Floor ), Rajshahi",
+      "link": "https://maps.app.goo.gl/NeURvyHvjfyaYg7NA"
+    }
+]

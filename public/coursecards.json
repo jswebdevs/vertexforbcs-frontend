@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "icon": "📝",
+    "title": "Introduction to Exam",
+    "description": "Master the basics of Bangla.",
+    "link": "/courses/introduction%20to%20exam"
+  },
+  {
+    "id": 2,
+    "icon": "📖",
+    "title": "English",
+    "description": "Improve your English fluency.",
+    "link": "/courses/english"
+  },
+  {
+    "id": 3,
+    "icon": "➗",
+    "title": "Mathematics",
+    "description": "Unlock key math concepts easily.",
+    "link": "/course/mathematics"
+  },
+  {
+    "id": 4,
+    "icon": "🌍",
+    "title": "General Knowledge",
+    "description": "Expand your knowledge of the world.",
+    "link": "/courses/general-knowledge"
+  }
+]

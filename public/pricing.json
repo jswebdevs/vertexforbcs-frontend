@@ -1,0 +1,54 @@
+{
+  "header": "Subscriptions",
+  "subheader": "Choose the plan that’s right for you and start learning today.",
+  "packages": [
+    {
+      "id": 1,
+      "packageName": "এক মাস",
+      "packageDetails": "A great start for individuals",
+      "price": "২০০",
+      "features": [
+        "One Month Validity",
+        "Access to One course",
+        "24x7 Support",
+        "Community Access"
+      ]
+    },
+    {
+      "id": 2,
+      "packageName": "দুই মাস",
+      "packageDetails": "Best for professionals",
+      "price": "৪০০",
+      "features": [
+        "Two Months Validity",
+        "Access to one course",
+        "24x7 Support",
+        "Community Access"
+      ]
+    },
+    {
+      "id": 3,
+      "packageName": "তিন মাস",
+      "packageDetails": "For serious learners",
+      "price": "৫০০",
+      "features": [
+        "Three Months Validity",
+        "Access to one course",
+        "Priority Support",
+        "Community Access"
+      ]
+    },
+    {
+      "id": 4,
+      "packageName": "ছয় মাস",
+      "packageDetails": "Our Most Popupar Package",
+      "price": "১৫০০",
+      "features": [
+        "Six Months Validity",
+        "Access to all courses",
+        "Dedicated Priority Support",
+        "Community Access"
+      ]
+    }
+  ]
+}
