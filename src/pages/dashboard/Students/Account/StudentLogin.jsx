@@ -1,24 +1,22 @@
+// src/pages/student/auth/StudentLogin.jsx
 import { useState } from "react";
-import { useStudentAuth } from "../../../../providers/StudentAuthProvider"; // Adjust the import path as necessary
+import { useStudentAuth } from "../../../../providers/StudentAuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 
 const StudentLogin = () => {
-  const { login, error, loading } = useStudentAuth();
-  const [usernameOrEmail, setUsernameOrEmail] = useState(""); // Combined field for username or email
+  const { login, error, loading, isAuthenticatedStudent } = useStudentAuth();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(usernameOrEmail, password);
+    await login(email, password);
 
-    // Check if there's no error after attempting login
-    if (!error) {
-      navigate("/student/dashboard"); // Redirect to dashboard if login is successful
-    } else {
-      // Optional: Clear password field after unsuccessful login attempt
-      setPassword("");
+    // Redirect after login success
+    if (isAuthenticatedStudent) {
+      navigate("/student/dashboard");
     }
   };
 
@@ -28,31 +26,35 @@ const StudentLogin = () => {
         <div className="text-center lg:text-left">
           <h1 className="text-3xl font-bold">Welcome to Student Login</h1>
           <p className="py-6">
-            Please make sure you are logged in before proceeding to the next
-            step. If you are an Admin <Link to="/admin/login">Login Here</Link>
+            Please log in to continue. If you are an Admin,{" "}
+            <Link to="/admin/login" className="text-blue-400 underline">
+              Login Here
+            </Link>
           </p>
         </div>
+
         <div className="card w-full max-w-sm shrink-0 shadow-2xl">
           <form className="card-body" onSubmit={handleSubmit}>
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-white">Username or Email</span>
+                <span className="label-text text-white">Email</span>
               </label>
               <input
-                type="text"
-                placeholder="username or email"
+                type="email"
+                placeholder="email"
                 className="input input-bordered bg-gray-800"
-                value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-white">Password</span>
               </label>
               <input
-                type={showPassword ? "text" : "password"} // Toggle input type
+                type={showPassword ? "text" : "password"}
                 placeholder="password"
                 className="input input-bordered bg-gray-800"
                 value={password}
@@ -65,14 +67,15 @@ const StudentLogin = () => {
                     type="checkbox"
                     className="mr-2"
                     checked={showPassword}
-                    onChange={() => setShowPassword(!showPassword)} // Toggle showPassword state
+                    onChange={() => setShowPassword(!showPassword)}
                   />
                   Show Password
                 </span>
               </label>
             </div>
-            {/* Display error message if login fails */}
+
             {error && <p className="text-red-500">{error}</p>}
+
             <div className="form-control mt-6">
               <button
                 className="btn btn-primary"

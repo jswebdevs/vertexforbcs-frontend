@@ -6,13 +6,76 @@ import { useStudentAuth } from "../providers/StudentAuthProvider";
 
 const SiteHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticatedAdmin } = useAdminAuth();
-  const { isAuthenticatedStudent } = useStudentAuth();
+  const { isAuthenticatedAdmin } = useState(useAdminAuth);
+  const { isAuthenticatedStudent } = useState(useStudentAuth);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleMenuClose = () => setIsOpen(false);
 
   const isLoggedIn = isAuthenticatedAdmin || isAuthenticatedStudent;
+
+  const links = <><Link to="/" className="hover:underline">
+            Home
+          </Link>
+          <Link to="/about" className="hover:underline">
+            About Us
+          </Link>
+          <Link to="/courses" className="hover:underline">
+            Courses
+          </Link>
+          <Link to="/gallery" className="hover:underline">
+            Gallery
+          </Link>
+          <Link to="/reviews" className="hover:underline">
+            Reviews
+          </Link>
+          <Link to="/pricing" className="hover:underline">
+            Pricing
+          </Link>
+          <Link to="/contact" className="hover:underline">
+            Contact Us
+          </Link></>;
+
+  const loggedInLink = (
+    <>
+      {isLoggedIn ? (
+        isAuthenticatedStudent ? (
+          <Link
+            to="/student/dashboard"
+            onClick={handleMenuClose}
+            className="hover:underline"
+          >
+            Account
+          </Link>
+        ) : (
+          <Link
+            to="/admin/student"
+            onClick={handleMenuClose}
+            className="hover:underline"
+          >
+            Account
+          </Link>
+        )
+      ) : (
+        <>
+          <Link
+            to="/student/login"
+            onClick={handleMenuClose}
+            className="border border-white hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Login
+          </Link>
+          <Link
+            to="/student/register"
+            onClick={handleMenuClose}
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Signup
+          </Link>
+        </>
+      )}
+    </>
+  );
 
   return (
     <header className="w-full bg-[#ADD8E6] text-white py-6 border-white border-b-[1px]">
@@ -44,54 +107,8 @@ const SiteHeader = () => {
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex space-x-4 ml-8 items-center h-full text-black">
-          <Link to="/" className="hover:underline">
-            Home
-          </Link>
-          <Link to="/about" className="hover:underline">
-            About Us
-          </Link>
-          <Link to="/courses" className="hover:underline">
-            Courses
-          </Link>
-          <Link to="/gallery" className="hover:underline">
-            Gallery
-          </Link>
-          <Link to="/reviews" className="hover:underline">
-            Reviews
-          </Link>
-          <Link to="/pricing" className="hover:underline">
-            Pricing
-          </Link>
-          <Link to="/contact" className="hover:underline">
-            Contact Us
-          </Link>
-
-          {isLoggedIn ? (
-            isAuthenticatedStudent ? (
-              <Link to="/student/dashboard" className="hover:underline">
-                Account
-              </Link>
-            ) : (
-              <Link to="/admin/dashboard" className="hover:underline">
-                Account
-              </Link>
-            )
-          ) : (
-            <>
-              <Link
-                to="/student/login"
-                className="border border-white hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Login
-              </Link>
-              <Link
-                to="/student/register"
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Signup
-              </Link>
-            </>
-          )}
+          {links}
+          {loggedInLink}
         </nav>
       </div>
 
@@ -115,92 +132,9 @@ const SiteHeader = () => {
               X
             </button>
             <nav className="mt-4 flex flex-col space-y-4">
-              <Link
-                to="/"
-                onClick={handleMenuClose}
-                className="hover:underline"
-              >
-                Home
-              </Link>
-              <Link
-                to="/about"
-                onClick={handleMenuClose}
-                className="hover:underline"
-              >
-                About Us
-              </Link>
-              <Link
-                to="/courses"
-                onClick={handleMenuClose}
-                className="hover:underline"
-              >
-                Courses
-              </Link>
-              <Link
-                to="/gallery"
-                onClick={handleMenuClose}
-                className="hover:underline"
-              >
-                Gallery
-              </Link>
-              <Link
-                to="/reviews"
-                onClick={handleMenuClose}
-                className="hover:underline"
-              >
-                Reviews
-              </Link>
-              <Link
-                to="/pricing"
-                onClick={handleMenuClose}
-                className="hover:underline"
-              >
-                Pricing
-              </Link>
-              <Link
-                to="/contact"
-                onClick={handleMenuClose}
-                className="hover:underline"
-              >
-                Contact Us
-              </Link>
+              {links}
 
-              {isLoggedIn ? (
-                isAuthenticatedStudent ? (
-                  <Link
-                    to="/student/dashboard"
-                    onClick={handleMenuClose}
-                    className="hover:underline"
-                  >
-                    Account
-                  </Link>
-                ) : (
-                  <Link
-                    to="/admin/student"
-                    onClick={handleMenuClose}
-                    className="hover:underline"
-                  >
-                    Account
-                  </Link>
-                )
-              ) : (
-                <>
-                  <Link
-                    to="/student/login"
-                    onClick={handleMenuClose}
-                    className="border border-white hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/student/register"
-                    onClick={handleMenuClose}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Signup
-                  </Link>
-                </>
-              )}
+              {loggedInLink}
             </nav>
           </div>
         </div>
