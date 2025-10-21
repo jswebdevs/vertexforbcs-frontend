@@ -27,7 +27,7 @@ const StudentLogin = () => {
           <h1 className="text-3xl font-bold">Welcome to Student Login</h1>
           <p className="py-6">
             Please log in to continue. If you are an Admin,{" "}
-            <Link to="/admin/login" className="text-blue-400 underline">
+            <Link to="/admin/login" className="text-blue-400 underline text-white decoration">
               Login Here
             </Link>
           </p>
