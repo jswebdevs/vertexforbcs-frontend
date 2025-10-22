@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useStudentAuth } from "../../../../providers/StudentAuthProvider";
+import useAuth from "../../../../hooks/useAuth"; // Updated to single AuthProvider
 import RunningQuiz from "./RunningQuiz";
 import Modal from "./Modal";
 
 const StudentQuizzes = () => {
-  const { studentId, studentName } = useStudentAuth();
+  const { user, userType } = useAuth();
+  const studentId = user?.uid || null;
+  const studentName = user?.displayName || "Student";
+
   const [quizzes, setQuizzes] = useState([]);
   const [studentScores, setStudentScores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,26 +19,21 @@ const StudentQuizzes = () => {
   // Function to refresh quiz data after submitting a quiz
   const refreshData = async () => {
     try {
-      // Re-fetch the quizzes and scores data to update the state
       const quizResponse = await fetch(
         `https://vertexforbcs.com/vartexforbcs/web/quiz/index`
       );
-      if (!quizResponse.ok) {
-        throw new Error("Failed to fetch quiz data");
-      }
+      if (!quizResponse.ok) throw new Error("Failed to fetch quiz data");
       const quizData = await quizResponse.json();
       const filteredQuizzes = quizData.data;
 
       const scoresResponse = await fetch(
         `https://vertexforbcs.com/vartexforbcs/web/ranking/quiz/single-student/${studentId}`
       );
-      if (!scoresResponse.ok) {
-        throw new Error("Failed to fetch student scores");
-      }
+      if (!scoresResponse.ok) throw new Error("Failed to fetch student scores");
       const scoresData = await scoresResponse.json();
 
       setQuizzes(filteredQuizzes);
-      setStudentScores(scoresData); // Save scores data
+      setStudentScores(scoresData);
     } catch (err) {
       setError(err.message);
     }
@@ -49,13 +47,11 @@ const StudentQuizzes = () => {
       }
 
       try {
-        // Fetch student's enrolled courses and quizzes
         const studentResponse = await fetch(
           `https://vertexforbcs.com/vartexforbcs/web/student/${studentId}`
         );
-        if (!studentResponse.ok) {
+        if (!studentResponse.ok)
           throw new Error("Failed to fetch student data");
-        }
         const studentData = await studentResponse.json();
         const enrolledCourseIds = studentData.courses.map(
           (course) => course.courseID
@@ -64,25 +60,21 @@ const StudentQuizzes = () => {
         const quizResponse = await fetch(
           `https://vertexforbcs.com/vartexforbcs/web/quiz/index`
         );
-        if (!quizResponse.ok) {
-          throw new Error("Failed to fetch quiz data");
-        }
+        if (!quizResponse.ok) throw new Error("Failed to fetch quiz data");
         const quizData = await quizResponse.json();
         const filteredQuizzes = quizData.data.filter((quiz) =>
           enrolledCourseIds.includes(quiz.courseID)
         );
 
-        // Fetch individual student's scores
         const scoresResponse = await fetch(
           `https://vertexforbcs.com/vartexforbcs/web/ranking/quiz/single-student/${studentId}`
         );
-        if (!scoresResponse.ok) {
+        if (!scoresResponse.ok)
           throw new Error("Failed to fetch student scores");
-        }
         const scoresData = await scoresResponse.json();
 
         setQuizzes(filteredQuizzes);
-        setStudentScores(scoresData); // Save scores data
+        setStudentScores(scoresData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -110,17 +102,9 @@ const StudentQuizzes = () => {
     return scoreEntry ? scoreEntry.score : "N/A";
   };
 
-  if (loading) {
-    return <p>Loading quizzes...</p>;
-  }
-
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
-
-  if (quizzes.length === 0) {
-    return <p>No upcoming quizzes.</p>;
-  }
+  if (loading) return <p>Loading quizzes...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (quizzes.length === 0) return <p>No upcoming quizzes.</p>;
 
   const now = new Date();
 
@@ -128,16 +112,14 @@ const StudentQuizzes = () => {
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-4">Quizzes</h1>
       <div className="overflow-x-auto mx-0">
-        <table className="min-w-full bg-gray-800 border border-gray-700 items-center justify-center">
+        <table className="min-w-full bg-gray-800 border border-gray-700">
           <thead>
             <tr>
               <th className="py-2 px-4 text-left text-white">Serial</th>
               <th className="py-2 px-4 text-left text-white">
                 Course Title - Quiz Title
               </th>
-              <th className="py-2 px-4 text-left text-white">
-                Syllabus (Description)
-              </th>
+              <th className="py-2 px-4 text-left text-white">Syllabus</th>
               <th className="py-2 px-4 text-left text-white">Exam Date</th>
               <th className="py-2 px-4 text-left text-white">Start Time</th>
               <th className="py-2 px-4 text-left text-white">End Time</th>
@@ -154,7 +136,7 @@ const StudentQuizzes = () => {
             {quizzes.map((quiz, index) => {
               const startTime = new Date(`${quiz.quizDate}T${quiz.startTime}`);
               const endTime = new Date(`${quiz.quizDate}T${quiz.endTime}`);
-              const score = getQuizScore(quiz.quizTitle); // Fetch score for each quiz
+              const score = getQuizScore(quiz.quizTitle);
 
               return (
                 <tr key={quiz.quizId} className="border-b border-gray-700">
@@ -250,7 +232,7 @@ const StudentQuizzes = () => {
             quiz={activeQuiz}
             onClose={() => setActiveQuiz(null)}
             studentId={studentId}
-            refreshData={refreshData}  
+            refreshData={refreshData}
           />
         </Modal>
       )}

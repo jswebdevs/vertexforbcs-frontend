@@ -1,28 +1,35 @@
 // src/pages/student/auth/StudentLogin.jsx
 import { useState, useEffect } from "react";
-import { useStudentAuth } from "../../../../providers/StudentAuthProvider";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../../../../hooks/useAuth"; // unified AuthProvider
 
 const StudentLogin = () => {
-  const { login, error, loading, isAuthenticatedStudent } = useStudentAuth();
+  const { signInUser, user, userType, loading } = useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(usernameOrEmail, password);
+    setError("");
+    try {
+      await signInUser(usernameOrEmail, password);
+    } catch (err) {
+      setError(err.message || "Login failed");
+    }
   };
 
   useEffect(() => {
-    if (isAuthenticatedStudent) {
+    // Redirect if logged in and userType is student
+    if (user && userType === "student") {
       navigate("/student/dashboard");
     }
-  }, [isAuthenticatedStudent, navigate]);
+  }, [user, userType, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
+    <div className="lg:min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
       <div className="max-w-md w-full bg-white/30 dark:bg-gray-900/50 backdrop-blur-md rounded-xl shadow-lg p-8 border border-white/20 dark:border-gray-700">
         <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
           STUDENT LOGIN
@@ -30,7 +37,10 @@ const StudentLogin = () => {
 
         <p className="text-center text-gray-600 dark:text-gray-300 mb-6 text-sm">
           Please log in to continue. If you're an admin,{" "}
-          <Link to="/admin/login" className="text-blue-600 dark:text-blue-400 underline">
+          <Link
+            to="/admin/login"
+            className="text-blue-600 dark:text-blue-400 underline"
+          >
             login here
           </Link>
           .
@@ -39,7 +49,9 @@ const StudentLogin = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="form-control">
             <label className="label">
-              <span className="label-text text-gray-800 dark:text-white">Username or Email</span>
+              <span className="label-text text-gray-800 dark:text-white">
+                Username or Email
+              </span>
             </label>
             <input
               type="text"
@@ -53,7 +65,9 @@ const StudentLogin = () => {
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text text-gray-800 dark:text-white">Password</span>
+              <span className="label-text text-gray-800 dark:text-white">
+                Password
+              </span>
             </label>
             <input
               type={showPassword ? "text" : "password"}

@@ -1,33 +1,37 @@
 import { useEffect, useState } from "react";
-import { useStudentAuth } from "../../../../providers/StudentAuthProvider"; // Adjust the import path as necessary
+import useAuth from "../../../../hooks/useAuth"; // unified AuthProvider
 import StudentDashboardHeader from "./StudentDashboardHeader"; // Import your header
 import StudentWarning from "./StudentWarning"; // Import your warning section
 import StudentCalendar from "./StudentCalendar"; // Import your calendar
 
 const StudentDashboard = () => {
-  const { studentName, studentId, isAuthenticatedStudent } = useStudentAuth();
+  const { user, userType, loading: authLoading } = useAuth();
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const studentId = user?.uid;
+  const studentName = user?.displayName;
+
   // Fetch student data
   const fetchStudentData = async () => {
     try {
-      if (!studentId) return; // Ensure studentId is present
+      if (!studentId) return null;
+
       const response = await fetch(
         `https://vertexforbcs.com/vartexforbcs/web/student/${studentId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch student data");
       }
-      return await response.json(); // Return student data
+      return await response.json();
     } catch (err) {
       setError(err.message);
       console.error("Error fetching student data:", err);
     }
   };
 
-  // Fetch all quizzes from the API
+  // Fetch all quizzes
   const fetchQuizzes = async () => {
     try {
       const response = await fetch(
@@ -36,7 +40,7 @@ const StudentDashboard = () => {
       if (!response.ok) {
         throw new Error("Failed to fetch quiz data");
       }
-      return await response.json(); // Return quiz data
+      return await response.json();
     } catch (err) {
       setError(err.message);
       console.error("Error fetching quiz data:", err);
@@ -45,32 +49,29 @@ const StudentDashboard = () => {
 
   // Fetch and combine student and quiz data
   const fetchCombinedData = async () => {
-    setLoading(true); // Set loading state
-    const studentData = await fetchStudentData(); // Fetch student data
-    const quizData = await fetchQuizzes(); // Fetch quiz data
+    setLoading(true);
+    const studentData = await fetchStudentData();
+    const quizData = await fetchQuizzes();
 
     if (studentData && quizData) {
-      // Extract course IDs from student data
       const courseIDs = studentData.courses.map((course) => course.courseID);
-
-      // Filter quizzes that match course IDs
       const filteredQuizzes = quizData.data.filter((quiz) =>
         courseIDs.includes(quiz.courseID)
       );
-
-      setQuizzes(filteredQuizzes); // Set quizzes state
+      setQuizzes(filteredQuizzes);
     }
-    setLoading(false); // End loading state
+    setLoading(false);
   };
 
   useEffect(() => {
-    if (isAuthenticatedStudent && studentId) {
-      fetchCombinedData(); // Fetch combined data when studentId is available
+    if (!authLoading && user && userType === "student" && studentId) {
+      fetchCombinedData();
     }
-  }, [isAuthenticatedStudent, studentId]);
+  }, [authLoading, user, userType, studentId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (authLoading || loading) return <div>Loading...</div>;
+  if (!user || userType !== "student") return <div>Access denied</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
     <div className="student-dashboard">

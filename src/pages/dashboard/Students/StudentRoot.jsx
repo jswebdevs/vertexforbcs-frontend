@@ -1,15 +1,16 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { useStudentAuth } from "../../../providers/StudentAuthProvider"; // Adjust the import path as necessary
+import useAuth from "../../../hooks/useAuth"; // unified AuthProvider
 import StudentMenu from "./StudentMenu";
 
 const StudentRoot = () => {
-  const { isAuthenticatedStudent, loading } = useStudentAuth();
+  const { user, userType, loading } = useAuth();
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (!isAuthenticatedStudent) {
+  // Redirect if not logged in or not a student
+  if (!user || userType !== "student") {
     return <Navigate to="/student/login" />;
   }
 

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useStudentAuth } from "../../../../providers/StudentAuthProvider"; // Adjust the import path as necessary
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom";
+import useAuth from "../../../../hooks/useAuth"; // Updated to unified AuthProvider
 
 const StudentCourses = () => {
-  const { studentId } = useStudentAuth(); // Get studentId from auth
+  const { user, userType } = useAuth();
+  const studentId = user?.uid || null;
+
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +13,6 @@ const StudentCourses = () => {
   useEffect(() => {
     const fetchStudentData = async () => {
       if (!studentId) {
-        // If studentId is not available, stop loading
         setLoading(false);
         return;
       }
@@ -28,32 +29,20 @@ const StudentCourses = () => {
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false); // Stop loading regardless of the outcome
+        setLoading(false);
       }
     };
 
     fetchStudentData();
-  }, [studentId]); // Depend on studentId
+  }, [studentId]);
 
-  if (loading) {
-    return <p>Loading courses...</p>;
-  }
+  if (loading) return <p>Loading courses...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (!student) return <p>No student data found.</p>;
 
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
-
-  if (!student) {
-    return <p>No student data found.</p>;
-  }
-
-  // Get the enrolled courses for the student
   const enrolledCourses = student.courses || [];
 
-  // Function to format course title for the URL
-  const formatCourseTitle = (title) => {
-    return title.toLowerCase().replace(/ /g, "%20");
-  };
+  const formatCourseTitle = (title) => title.toLowerCase().replace(/ /g, "%20");
 
   return (
     <div className="p-4">
@@ -70,19 +59,14 @@ const StudentCourses = () => {
             </tr>
           </thead>
           <tbody>
-            {enrolledCourses.map((enrolledCourse) => (
-              <tr
-                key={enrolledCourse.courseID}
-                className="border-b border-gray-700"
-              >
+            {enrolledCourses.map((course) => (
+              <tr key={course.courseID} className="border-b border-gray-700">
+                <td className="py-2 px-4 text-white">{course.courseTitle}</td>
                 <td className="py-2 px-4 text-white">
-                  {enrolledCourse.courseTitle}
-                </td>
-                <td className="py-2 px-4 text-white">
-                  {enrolledCourse.upComingQuizzes &&
-                  enrolledCourse.upComingQuizzes.length > 0 ? (
+                  {course.upComingQuizzes &&
+                  course.upComingQuizzes.length > 0 ? (
                     <ul className="list-disc pl-5">
-                      {enrolledCourse.upComingQuizzes.map((quiz) => (
+                      {course.upComingQuizzes.map((quiz) => (
                         <li key={quiz.quizId} className="text-sm">
                           <strong>{quiz.quizTitle}</strong> - {quiz.quizDate}{" "}
                           (Start: {quiz.startTime})
@@ -95,9 +79,7 @@ const StudentCourses = () => {
                 </td>
                 <td className="py-2 px-4">
                   <Link
-                    to={`/courses/${formatCourseTitle(
-                      enrolledCourse.courseTitle
-                    )}`}
+                    to={`/courses/${formatCourseTitle(course.courseTitle)}`}
                   >
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
                       View Course

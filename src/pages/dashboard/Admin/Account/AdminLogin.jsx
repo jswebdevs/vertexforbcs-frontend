@@ -1,31 +1,44 @@
-
-import { useState } from "react";
-import { useAdminAuth } from "../../../../providers/AdminAuthProvider";
+import { useState, useEffect } from "react";
+import useAuth from "../../../../hooks/useAuth"; // Unified auth hook
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react"; // 👁️ আইকন যোগ করা হয়েছে
+import { Eye, EyeOff } from "lucide-react"; // 👁️ Icon
 import Lottie from "lottie-react";
-import loginAnimation from "../../../../assets/login2.json"
+import loginAnimation from "../../../../assets/login2.json";
 
 const AdminLogin = () => {
-  const { login, error, loading } = useAdminAuth();
+  const { signInUser, error, loading, userType } = useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👁️ পাসওয়ার্ড দেখা/লুকানোর state
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(usernameOrEmail, password);
-    if (!error) {
-      navigate("/admin/dashboard");
+    try {
+      const user = await signInUser(usernameOrEmail, password);
+      // Redirect only if user is admin
+      if (userType === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        alert("You are not authorized as admin.");
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
+
+  // Optional: auto-redirect if already logged in as admin
+  useEffect(() => {
+    if (userType === "admin") {
+      navigate("/admin/dashboard");
+    }
+  }, [userType, navigate]);
 
   return (
     <div className="hero min-h-screen">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center lg:text-left max-w-sm w-auto">
-          <Lottie animationData={loginAnimation}></Lottie>
+          <Lottie animationData={loginAnimation} />
         </div>
 
         <div className="card w-full max-w-sm shrink-0 shadow-2xl">
@@ -50,16 +63,14 @@ const AdminLogin = () => {
               <label className="label">
                 <span className="label-text text-white">Password</span>
               </label>
-
               <input
-                type={showPassword ? "text" : "password"} // 👁️ toggle
+                type={showPassword ? "text" : "password"}
                 placeholder="password"
                 className="input input-bordered bg-gray-700 text-white pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-
               {/* 👁️ Eye Button */}
               <button
                 type="button"
@@ -75,7 +86,11 @@ const AdminLogin = () => {
 
             {/* Submit Button */}
             <div className="form-control mt-6">
-              <button className="btn btn-primary" type="submit" disabled={loading}>
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={loading}
+              >
                 {loading ? "Logging in..." : "Login"}
               </button>
             </div>

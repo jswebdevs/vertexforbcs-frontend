@@ -1,79 +1,81 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "/logos.png"; // Adjust the logo path if necessary
-import { useAdminAuth } from "../providers/AdminAuthProvider";
-import { useStudentAuth } from "../providers/StudentAuthProvider";
+import useAuth from "../hooks/useAuth"; // Correct path for your hook
 
 const SiteHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticatedAdmin } = useState(useAdminAuth);
-  const { isAuthenticatedStudent } = useState(useStudentAuth);
+  const { user, userType } = useAuth();
+
+  // For testing, default user to null
+  const currentUser =  null;
+  const currentUserType = null;
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleMenuClose = () => setIsOpen(false);
 
-  const isLoggedIn = isAuthenticatedAdmin || isAuthenticatedStudent;
+  const isLoggedIn = !!currentUser;
 
-  const links = <><Link to="/" className="hover:underline">
-            Home
-          </Link>
-          <Link to="/about" className="hover:underline">
-            About Us
-          </Link>
-          <Link to="/courses" className="hover:underline">
-            Courses
-          </Link>
-          <Link to="/gallery" className="hover:underline">
-            Gallery
-          </Link>
-          <Link to="/reviews" className="hover:underline">
-            Reviews
-          </Link>
-          <Link to="/pricing" className="hover:underline">
-            Pricing
-          </Link>
-          <Link to="/contact" className="hover:underline">
-            Contact Us
-          </Link></>;
-
-  const loggedInLink = (
+  const links = (
     <>
-      {isLoggedIn ? (
-        isAuthenticatedStudent ? (
-          <Link
-            to="/student/dashboard"
-            onClick={handleMenuClose}
-            className="hover:underline"
-          >
-            Account
-          </Link>
-        ) : (
-          <Link
-            to="/admin/student"
-            onClick={handleMenuClose}
-            className="hover:underline"
-          >
-            Account
-          </Link>
-        )
-      ) : (
-        <>
-          <Link
-            to="/student/login"
-            onClick={handleMenuClose}
-            className="border border-white hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Login
-          </Link>
-          <Link
-            to="/student/register"
-            onClick={handleMenuClose}
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Signup
-          </Link>
-        </>
-      )}
+      <Link to="/" className="hover:underline">
+        Home
+      </Link>
+      <Link to="/about" className="hover:underline">
+        About Us
+      </Link>
+      <Link to="/courses" className="hover:underline">
+        Courses
+      </Link>
+      <Link to="/gallery" className="hover:underline">
+        Gallery
+      </Link>
+      <Link to="/reviews" className="hover:underline">
+        Reviews
+      </Link>
+      <Link to="/pricing" className="hover:underline">
+        Pricing
+      </Link>
+      <Link to="/contact" className="hover:underline">
+        Contact Us
+      </Link>
+    </>
+  );
+
+  const loggedInLink = isLoggedIn ? (
+    currentUserType === "student" ? (
+      <Link
+        to="/student/dashboard"
+        onClick={handleMenuClose}
+        className="hover:underline"
+      >
+        Account
+      </Link>
+    ) : (
+      <Link
+        to="/admin/student"
+        onClick={handleMenuClose}
+        className="hover:underline"
+      >
+        Account
+      </Link>
+    )
+  ) : (
+    <>
+      <Link
+        to="/student/login"
+        onClick={handleMenuClose}
+        className="border border-white hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Login
+      </Link>
+      <Link
+        to="/student/register"
+        onClick={handleMenuClose}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Signup
+      </Link>
     </>
   );
 
@@ -116,7 +118,7 @@ const SiteHeader = () => {
       {isOpen && (
         <div
           className="fixed inset-0 z-50 flex transition-all duration-500 ease-in-out"
-          onClick={handleMenuClose} // Closes menu when clicking on the blurred background
+          onClick={handleMenuClose}
         >
           {/* Background Blur */}
           <div className="absolute inset-0 bg-gray-800 bg-opacity-50 backdrop-blur-sm" />
@@ -126,14 +128,13 @@ const SiteHeader = () => {
             className={`bg-gray-800 w-64 h-full p-6 pt-10 transition-all duration-500 ease-in-out transform ${
               isOpen ? "translate-x-0" : "-translate-x-full"
             }`}
-            onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the menu
+            onClick={(e) => e.stopPropagation()}
           >
             <button onClick={handleMenuClose} className="text-white text-3xl">
               X
             </button>
             <nav className="mt-4 flex flex-col space-y-4">
               {links}
-
               {loggedInLink}
             </nav>
           </div>
