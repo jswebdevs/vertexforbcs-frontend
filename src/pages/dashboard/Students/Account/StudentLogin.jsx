@@ -14,10 +14,23 @@ const StudentLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!usernameOrEmail || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+
     try {
       await signInUser(usernameOrEmail, password);
     } catch (err) {
-      setError(err.message || "Login failed");
+      // Example: Firebase-friendly messages
+      if (err.code === "auth/user-not-found") {
+        setError("User not found");
+      } else if (err.code === "auth/wrong-password") {
+        setError("Incorrect password");
+      } else {
+        setError(err.message || "Login failed. Try again.");
+      }
     }
   };
 
@@ -28,31 +41,22 @@ const StudentLogin = () => {
   }, [user, userType, navigate]);
 
   return (
-<<<<<<< HEAD
-    <div className="hero min-h-screen">
-      <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="text-center lg:text-left">
-          <h1 className="text-3xl font-bold">Welcome to Student Login</h1>
-          <p className="py-6">
-            Please log in to continue. If you are an Admin,{" "}
-            <Link to="/admin/login" className="text-blue-400 underline">
-              Login Here
-            </Link>
-          </p>
-        </div>
-=======
-    <div className="min-h-screen flex items-center justify-center 
+    <div
+      className="min-h-screen flex items-center justify-center 
       bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 
       dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900 
-      transition-colors duration-500">
-      
-      <div className="max-w-md w-full bg-white/30 dark:bg-gray-900/60 backdrop-blur-md 
-        rounded-xl shadow-xl p-8 border border-white/20 dark:border-pink-400/30">
-
-        <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
+      transition-colors duration-500"
+    >
+      <div
+        className="max-w-md w-full bg-white/30 dark:bg-gray-900/60 backdrop-blur-md 
+        rounded-xl shadow-xl p-8 border border-white/20 dark:border-pink-400/30"
+      >
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-4">
           STUDENT LOGIN
         </h1>
 
+        {/* Description */}
         <p className="text-center text-gray-700 dark:text-gray-300 mb-6 text-sm">
           Please log in to continue. If you're an admin,{" "}
           <Link
@@ -63,8 +67,8 @@ const StudentLogin = () => {
           </Link>
           .
         </p>
->>>>>>> cc65b77aa9daecba1ff322e54cffbd8e245185ac
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Username or Email */}
           <div className="form-control">
@@ -77,17 +81,18 @@ const StudentLogin = () => {
               type="text"
               placeholder="username or email"
               className="input input-bordered w-full 
-              bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
-              placeholder-gray-400 dark:placeholder-gray-500 
-              focus:outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-600"
+                bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
+                placeholder-gray-400 dark:placeholder-gray-500 
+                focus:outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-600"
               value={usernameOrEmail}
               onChange={(e) => setUsernameOrEmail(e.target.value)}
               required
+              disabled={loading}
             />
           </div>
 
           {/* Password */}
-          <div className="form-control">
+          <div className="form-control relative">
             <label className="label">
               <span className="label-text text-gray-800 dark:text-white">
                 Password
@@ -97,13 +102,22 @@ const StudentLogin = () => {
               type={showPassword ? "text" : "password"}
               placeholder="password"
               className="input input-bordered w-full 
-              bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
-              placeholder-gray-400 dark:placeholder-gray-500 
-              focus:outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-600"
+                bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
+                placeholder-gray-400 dark:placeholder-gray-500 
+                focus:outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-600 pr-10"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={loading}
             />
+            {/* Toggle Password */}
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
           </div>
 
           {/* Error Message */}
@@ -113,9 +127,9 @@ const StudentLogin = () => {
           <div className="form-control mt-4">
             <button
               className="w-full py-2 px-4 text-white font-semibold rounded-md 
-              bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 
-              hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 
-              transition-all duration-300 shadow-md disabled:opacity-50 cursor-pointer"
+                bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 
+                hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 
+                transition-all duration-300 shadow-md disabled:opacity-50 cursor-pointer"
               type="submit"
               disabled={loading}
             >
