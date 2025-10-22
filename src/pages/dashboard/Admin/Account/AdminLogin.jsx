@@ -1,14 +1,15 @@
-
 import { useState } from "react";
 import { useAdminAuth } from "../../../../providers/AdminAuthProvider";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react"; // 👁️ আইকন যোগ করা হয়েছে
+import { Eye, EyeOff } from "lucide-react";
+import Lottie from "lottie-react";
+import loginAnimation from "../../../../assets/login2.json";
 
 const AdminLogin = () => {
   const { login, error, loading } = useAdminAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👁️ পাসওয়ার্ড দেখা/লুকানোর state
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,18 +21,20 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="hero min-h-screen">
-      <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="text-center lg:text-left">
-          <h1 className="text-3xl font-bold">Welcome to Admin Login</h1>
-          <p className="py-6">
-            Please make sure you are logged in before proceeding to the next step.
-          </p>
+    <div className="hero min-h-screen bg-gray-900 text-white">
+      <div className="hero-content flex-col lg:flex-row-reverse items-center justify-center">
+        
+        {/* 🟡 Animation: 
+            - মোবাইলে ছোট ও উপরে
+            - বড় স্ক্রিনে পাশে বড় */}
+        <div className="block lg:block text-center lg:text-left w-10 lg:w-auto mb-4 lg:mb-0 ">
+          <Lottie animationData={loginAnimation} />
         </div>
 
-        <div className="card w-full max-w-sm shrink-0 shadow-2xl">
+        {/* 🟢 Login Form */}
+        <div className="card w-full max-w-sm shrink-0 shadow-2xl bg-gray-800">
           <form className="card-body" onSubmit={handleSubmit}>
-            {/* Username or Email Field */}
+            {/* Username or Email */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-white">Username or Email</span>
@@ -46,22 +49,19 @@ const AdminLogin = () => {
               />
             </div>
 
-            {/* Password Field */}
+            {/* Password */}
             <div className="form-control relative">
               <label className="label">
                 <span className="label-text text-white">Password</span>
               </label>
-
               <input
-                type={showPassword ? "text" : "password"} // 👁️ toggle
+                type={showPassword ? "text" : "password"}
                 placeholder="password"
                 className="input input-bordered bg-gray-700 text-white pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-
-              {/* 👁️ Eye Button */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -71,10 +71,10 @@ const AdminLogin = () => {
               </button>
             </div>
 
-            {/* Error Message */}
+            {/* Error */}
             {error && <p className="text-red-500">{error}</p>}
 
-            {/* Submit Button */}
+            {/* Submit */}
             <div className="form-control mt-6">
               <button className="btn btn-primary" type="submit" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
