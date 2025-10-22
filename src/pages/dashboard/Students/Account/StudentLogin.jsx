@@ -113,7 +113,11 @@ const StudentLogin = () => {
             {/* Toggle Password */}
             <button
               type="button"
+<<<<<<< HEAD
               className="absolute right-3 mt-5 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+=======
+              className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+>>>>>>> fb5c785f80b8f6bb51d7188ba5e3994c1f00f41b
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? "🙈" : "👁️"}
