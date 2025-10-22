@@ -1,24 +1,29 @@
-import { useStudentAuth } from "../../../../providers/StudentAuthProvider";
-import { FaUser } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import moment from "moment"; // Assuming you are using moment.js
+import { FaUser } from "react-icons/fa";
+import moment from "moment";
+import useAuth from "../../../../hooks/useAuth"; // unified AuthProvider
 
-const StudentDashboardHeader = ({ studentName }) => {
-  const { logout } = useStudentAuth();
+const StudentDashboardHeader = () => {
+  const { user, userType, signOutUser } = useAuth();
+  const studentName = user?.displayName || "Student";
+
   const [currentDateTime, setCurrentDateTime] = useState(
-    moment().format("MMMM D, YYYY, hh:mm A") // Format: September 30, 2024, 03:08 AM
+    moment().format("MMMM D, YYYY, hh:mm A")
   );
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(moment().format("MMMM D, YYYY, hh:mm A"));
-    }, 1000); // Update time every second
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogout = () => {
-    logout(); // Call the logout function
+  const handleLogout = async () => {
+    await signOutUser();
   };
+
+  // Only render header if userType is student
+  if (!user || userType !== "student") return null;
 
   return (
     <header className="w-full flex flex-col md:flex-row items-center justify-between p-4 bg-gray-800 text-white">

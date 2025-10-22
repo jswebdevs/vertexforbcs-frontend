@@ -1,27 +1,34 @@
 // src/pages/student/auth/StudentLogin.jsx
 import { useState, useEffect } from "react";
-import { useStudentAuth } from "../../../../providers/StudentAuthProvider";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../../../../hooks/useAuth";
 
 const StudentLogin = () => {
-  const { login, error, loading, isAuthenticatedStudent } = useStudentAuth();
+  const { signInUser, user, userType, loading } = useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(usernameOrEmail, password);
+    setError("");
+    try {
+      await signInUser(usernameOrEmail, password);
+    } catch (err) {
+      setError(err.message || "Login failed");
+    }
   };
 
   useEffect(() => {
-    if (isAuthenticatedStudent) {
+    if (user && userType === "student") {
       navigate("/student/dashboard");
     }
-  }, [isAuthenticatedStudent, navigate]);
+  }, [user, userType, navigate]);
 
   return (
+<<<<<<< HEAD
     <div className="hero min-h-screen">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center lg:text-left">
@@ -33,52 +40,82 @@ const StudentLogin = () => {
             </Link>
           </p>
         </div>
+=======
+    <div className="min-h-screen flex items-center justify-center 
+      bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 
+      dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900 
+      transition-colors duration-500">
+      
+      <div className="max-w-md w-full bg-white/30 dark:bg-gray-900/60 backdrop-blur-md 
+        rounded-xl shadow-xl p-8 border border-white/20 dark:border-pink-400/30">
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
+          STUDENT LOGIN
+        </h1>
+
+        <p className="text-center text-gray-700 dark:text-gray-300 mb-6 text-sm">
+          Please log in to continue. If you're an admin,{" "}
+          <Link
+            to="/admin/login"
+            className="text-blue-600 dark:text-blue-400 underline"
+          >
+            login here
+          </Link>
+          .
+        </p>
+>>>>>>> cc65b77aa9daecba1ff322e54cffbd8e245185ac
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Username or Email */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text text-gray-800 dark:text-white">Username or Email</span>
+              <span className="label-text text-gray-800 dark:text-white">
+                Username or Email
+              </span>
             </label>
             <input
               type="text"
               placeholder="username or email"
-              className="input input-bordered w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              className="input input-bordered w-full 
+              bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
+              placeholder-gray-400 dark:placeholder-gray-500 
+              focus:outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-600"
               value={usernameOrEmail}
               onChange={(e) => setUsernameOrEmail(e.target.value)}
               required
             />
           </div>
 
+          {/* Password */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text text-gray-800 dark:text-white">Password</span>
+              <span className="label-text text-gray-800 dark:text-white">
+                Password
+              </span>
             </label>
             <input
               type={showPassword ? "text" : "password"}
               placeholder="password"
-              className="input input-bordered w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              className="input input-bordered w-full 
+              bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
+              placeholder-gray-400 dark:placeholder-gray-500 
+              focus:outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-600"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <label className="label cursor-pointer mt-2">
-              <span className="label-text text-gray-700 dark:text-gray-300">
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                  checked={showPassword}
-                  onChange={() => setShowPassword(!showPassword)}
-                />
-                Show Password
-              </span>
-            </label>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-          <div className="form-control mt-6">
+          {/* Submit Button */}
+          <div className="form-control mt-4">
             <button
-              className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white w-full transition-colors duration-300"
+              className="w-full py-2 px-4 text-white font-semibold rounded-md 
+              bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 
+              hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 
+              transition-all duration-300 shadow-md disabled:opacity-50 cursor-pointer"
               type="submit"
               disabled={loading}
             >

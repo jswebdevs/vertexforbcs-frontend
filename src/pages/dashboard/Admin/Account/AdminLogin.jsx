@@ -1,12 +1,19 @@
+<<<<<<< HEAD
 import { useState } from "react";
 import { useAdminAuth } from "../../../../providers/AdminAuthProvider";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+=======
+import { useState, useEffect } from "react";
+import useAuth from "../../../../hooks/useAuth"; // Unified auth hook
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react"; // 👁️ Icon
+>>>>>>> cc65b77aa9daecba1ff322e54cffbd8e245185ac
 import Lottie from "lottie-react";
 import loginAnimation from "../../../../assets/login2.json";
 
 const AdminLogin = () => {
-  const { login, error, loading } = useAdminAuth();
+  const { signInUser, error, loading, userType } = useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -14,13 +21,28 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(usernameOrEmail, password);
-    if (!error) {
-      navigate("/admin/dashboard");
+    try {
+      const user = await signInUser(usernameOrEmail, password);
+      // Redirect only if user is admin
+      if (userType === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        alert("You are not authorized as admin.");
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
+  // Optional: auto-redirect if already logged in as admin
+  useEffect(() => {
+    if (userType === "admin") {
+      navigate("/admin/dashboard");
+    }
+  }, [userType, navigate]);
+
   return (
+<<<<<<< HEAD
     <div className="hero min-h-screen bg-gray-900 text-white">
       <div className="hero-content flex-col lg:flex-row-reverse items-center justify-center">
         
@@ -28,6 +50,11 @@ const AdminLogin = () => {
             - মোবাইলে ছোট ও উপরে
             - বড় স্ক্রিনে পাশে বড় */}
         <div className="block lg:block text-center lg:text-left w-10 lg:w-auto mb-4 lg:mb-0 ">
+=======
+    <div className="hero min-h-screen">
+      <div className="hero-content flex-col lg:flex-row-reverse">
+        <div className="text-center lg:text-left max-w-sm w-auto">
+>>>>>>> cc65b77aa9daecba1ff322e54cffbd8e245185ac
           <Lottie animationData={loginAnimation} />
         </div>
 
@@ -62,6 +89,10 @@ const AdminLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+<<<<<<< HEAD
+=======
+              {/* 👁️ Eye Button */}
+>>>>>>> cc65b77aa9daecba1ff322e54cffbd8e245185ac
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -76,7 +107,11 @@ const AdminLogin = () => {
 
             {/* Submit */}
             <div className="form-control mt-6">
-              <button className="btn btn-primary" type="submit" disabled={loading}>
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={loading}
+              >
                 {loading ? "Logging in..." : "Login"}
               </button>
             </div>

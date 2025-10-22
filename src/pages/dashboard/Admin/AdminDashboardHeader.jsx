@@ -1,10 +1,10 @@
-import { useAdminAuth } from "../../../providers/AdminAuthProvider"; // Adjust the import path as necessary
 import { FaUser } from "react-icons/fa"; // Import user icon from react-icons
 import { useEffect, useState } from "react";
 import moment from "moment"; // Assuming you are using moment.js
+import useAuth from "../../../hooks/useAuth"; // Unified auth hook
 
 const AdminDashboardHeader = ({ adminName, onClearCache }) => {
-  const { logout } = useAdminAuth();
+  const { signOutUser } = useAuth(); // unified logout function
   const [currentDateTime, setCurrentDateTime] = useState(
     moment().format("MMMM D, YYYY, hh:mm A") // Format: September 30, 2024, 03:08 AM
   );
@@ -17,7 +17,7 @@ const AdminDashboardHeader = ({ adminName, onClearCache }) => {
   }, []);
 
   const handleLogout = () => {
-    logout(); // Call the logout function
+    signOutUser(); // Call the unified logout function
   };
 
   return (

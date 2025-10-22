@@ -1,15 +1,16 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { useAdminAuth } from "../../../providers/AdminAuthProvider";
+import useAuth from "../../../hooks/useAuth"; // unified AuthProvider
 import AdminMenu from "./AdminMenu";
 
 const AdminRoot = () => {
-  const { isAuthenticatedAdmin, loading } = useAdminAuth();
+  const { user, userType, loading } = useAuth();
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (!isAuthenticatedAdmin) {
+  // Redirect if not logged in or not an admin
+  if (!user || userType !== "admin") {
     return <Navigate to="/admin/login" />;
   }
 

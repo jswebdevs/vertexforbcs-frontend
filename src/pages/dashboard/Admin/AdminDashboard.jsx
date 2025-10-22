@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAdminAuth } from "../../../providers/AdminAuthProvider"; // Adjust the import path as necessary
+import useAuth from "../../../hooks/useAuth"; // unified AuthProvider
 import AdminDashboardHeader from "./AdminDashboardHeader";
 import AdminWarning from "./AdminWarning";
 import AdminStats from "./AdminStats";
@@ -7,15 +7,19 @@ import AdminCalendar from "./AdminCalendar";
 import "./AdminDashboard.css"; // Optional CSS file for styling
 
 const AdminDashboard = () => {
-  const { adminName } = useAdminAuth();
+  const { user, userType, signOutUser } = useAuth();
+  const adminName = user?.displayName || "Admin";
+
   const [courseData, setCourseData] = useState([]);
   const [studentData, setStudentData] = useState([]);
-  const [quizzes, setQuizzes] = useState([]); // Variable to store quiz data
-  const [onHoldSubscriptions, setOnHoldSubscriptions] = useState(0); // Initialize to 0 for on-hold subscriptions
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [quizzes, setQuizzes] = useState([]);
+  const [onHoldSubscriptions, setOnHoldSubscriptions] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!user || userType !== "admin") return; // Only fetch if admin
+
     const fetchCourses = async () => {
       try {
         const response = await fetch(
@@ -27,7 +31,7 @@ const AdminDashboard = () => {
 
         // Extract quizzes from courses
         const allQuizzes = data.flatMap((course) => course.quizzes || []);
-        setQuizzes(allQuizzes); // Store quizzes data
+        setQuizzes(allQuizzes);
       } catch (error) {
         setError(error.message);
         console.error("Error fetching courses:", error);
@@ -56,7 +60,7 @@ const AdminDashboard = () => {
         if (!response.ok)
           throw new Error("Failed to fetch on-hold subscriptions.");
         const data = await response.json();
-        setOnHoldSubscriptions(data.length); // Set the length of the data as the number of on-hold subscriptions
+        setOnHoldSubscriptions(data.length);
       } catch (error) {
         setError(error.message);
         console.error("Error fetching on-hold subscriptions:", error);
@@ -68,12 +72,12 @@ const AdminDashboard = () => {
         fetchCourses(),
         fetchStudents(),
         fetchOnHoldSubscriptions(),
-      ]); // Fetch data concurrently
-      setLoading(false); // Set loading to false after all fetches are complete
+      ]);
+      setLoading(false);
     };
 
     initializeData();
-  }, []);
+  }, [user, userType]);
 
   const clearCache = async () => {
     try {
@@ -87,9 +91,8 @@ const AdminDashboard = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      if (!response.ok) throw new Error("Network response was not ok");
+
       const data = await response.json();
       console.log("Cache cleared successfully:", data);
       alert("Cache cleared successfully!");
@@ -99,18 +102,17 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading) {
-    return <p className="text-blue-500">Loading data, please wait...</p>; // Loading message
-  }
+  if (loading)
+    return <p className="text-blue-500">Loading data, please wait...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
 
-  if (error) {
-    return <p className="text-red-500">Error: {error}</p>; // Error message
-  }
+  if (!user || userType !== "admin")
+    return <p className="text-red-500">You do not have access to this page.</p>;
 
   return (
     <div className="admin-dashboard">
       <AdminDashboardHeader adminName={adminName} onClearCache={clearCache} />
-      <AdminWarning quizzes={quizzes} /> {/* Pass quizzes to AdminWarning */}
+      <AdminWarning quizzes={quizzes} />
       <div className="admin-content">
         {courseData.length === 0 && studentData.length === 0 ? (
           <p className="text-red-500">
