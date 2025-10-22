@@ -52,15 +52,15 @@ const AdminLogin = () => {
         rounded-xl shadow-xl p-8 border border-white/20 dark:border-pink-400/30"
       >
         {/* Title */}
-        <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-4">
-          STUDENT LOGIN
+        <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-4 uppercase">
+          Admin Login
         </h1>
 
         {/* Description */}
         <p className="text-center text-gray-700 dark:text-gray-300 mb-6 text-sm">
-          Please log in to continue. If you're an admin,{" "}
+          Please log in to continue. If you're a student,{" "}
           <Link
-            to="/admin/login"
+            to="/student/login"
             className="text-blue-600 dark:text-blue-400 underline"
           >
             login here
