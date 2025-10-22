@@ -29,8 +29,11 @@ const StudentLogin = () => {
   }, [user, userType, navigate]);
 
   return (
-    <div className="lg:min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
-      <div className="max-w-md w-full bg-white/30 dark:bg-gray-900/50 backdrop-blur-md rounded-xl shadow-lg p-8 border border-white/20 dark:border-gray-700">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
+      <div
+        className="max-w-md w-full bg-white/30 dark:bg-gray-900/50 backdrop-blur-md rounded-xl shadow-lg py-0 sm:py-8 px-8
+       border border-white/20 dark:border-blue-500"
+      >
         <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
           STUDENT LOGIN
         </h1>
@@ -56,7 +59,7 @@ const StudentLogin = () => {
             <input
               type="text"
               placeholder="username or email"
-              className="input input-bordered w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              className="input input-bordered w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-0 focus:ring-1 focus:ring-accent"
               value={usernameOrEmail}
               onChange={(e) => setUsernameOrEmail(e.target.value)}
               required
@@ -78,15 +81,7 @@ const StudentLogin = () => {
               required
             />
             <label className="label cursor-pointer mt-2">
-              <span className="label-text text-gray-700 dark:text-gray-300">
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                  checked={showPassword}
-                  onChange={() => setShowPassword(!showPassword)}
-                />
-                Show Password
-              </span>
+              <span className="label-text text-gray-700 dark:text-gray-300"></span>
             </label>
           </div>
 
@@ -94,7 +89,7 @@ const StudentLogin = () => {
 
           <div className="form-control mt-6">
             <button
-              className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white w-full transition-colors duration-300"
+              className="btn btn-primary bg-indigo-300 via-purple-300 hover:bg-pink-300 text-white w-full transition-colors duration-300"
               type="submit"
               disabled={loading}
             >
