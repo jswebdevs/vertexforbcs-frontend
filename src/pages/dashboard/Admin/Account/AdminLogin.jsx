@@ -2,15 +2,21 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
+import { FcGoogle } from "react-icons/fc"; // Google icon
+import Swal from "sweetalert2"; // SweetAlert2
 
 const AdminLogin = () => {
-  const { signInUser, user, userType, loading } = useAuth();
+  const { signInWithController, signInWithGoogle, user, userType, loading } =
+    useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  /** ------------------------
+   * Handle controller login (username/password)
+   * ------------------------ */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -21,22 +27,43 @@ const AdminLogin = () => {
     }
 
     try {
-      await signInUser(usernameOrEmail, password);
+      await signInWithController(usernameOrEmail, password);
     } catch (err) {
-      // Example: Firebase-friendly messages
-      if (err.code === "auth/user-not-found") {
-        setError("User not found");
-      } else if (err.code === "auth/wrong-password") {
-        setError("Incorrect password");
-      } else {
-        setError(err.message || "Login failed. Try again.");
-      }
+      setError(err.message || "Login failed. Try again.");
     }
   };
 
+  /** ------------------------
+   * Handle Google login
+   * ------------------------ */
+  const handleGoogleLogin = async () => {
+    setError("");
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setError(err.message || "Google login failed");
+    }
+  };
+
+  /** ------------------------
+   * Redirect admin after login or warn if not admin
+   * ------------------------ */
   useEffect(() => {
-    if (user && userType === "admin") {
-      navigate("/admin/dashboard");
+    if (user) {
+      if (userType === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "Not an Admin",
+          text: "You are not an admin. Redirecting to student login...",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          navigate("/student/login");
+        });
+      }
     }
   }, [user, userType, navigate]);
 
@@ -53,14 +80,14 @@ const AdminLogin = () => {
       >
         {/* Title */}
         <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-4">
-          STUDENT LOGIN
+          ADMIN LOGIN
         </h1>
 
         {/* Description */}
         <p className="text-center text-gray-700 dark:text-gray-300 mb-6 text-sm">
-          Please log in to continue. If you're an admin,{" "}
+          Please log in to continue. If you're a student,{" "}
           <Link
-            to="/admin/login"
+            to="/student/login"
             className="text-blue-600 dark:text-blue-400 underline"
           >
             login here
@@ -113,7 +140,7 @@ const AdminLogin = () => {
             {/* Toggle Password */}
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? "🙈" : "👁️"}
@@ -134,6 +161,29 @@ const AdminLogin = () => {
               disabled={loading}
             >
               {loading ? "Logging in..." : "Login"}
+            </button>
+          </div>
+
+          {/* OR Divider */}
+          <div className="flex items-center my-2">
+            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+            <span className="mx-2 text-gray-500 dark:text-gray-400 text-sm">
+              OR
+            </span>
+            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+          </div>
+
+          {/* Google Login */}
+          <div className="form-control mt-2">
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              className="w-full py-2 px-4 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md 
+                bg-white dark:bg-gray-800 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 shadow-md cursor-pointer"
+            >
+              <FcGoogle className="mr-2 text-xl" />
+              {loading ? "Logging in..." : "Login with Google"}
             </button>
           </div>
         </form>

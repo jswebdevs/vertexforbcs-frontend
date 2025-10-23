@@ -1,3 +1,4 @@
+// src/context/AuthProvider.jsx
 import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
 import {
@@ -9,11 +10,18 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import Swal from "sweetalert2";
 import auth from "../firebase/firebase.init";
 
-// You can switch between local and render later
+// Backend API URLs
 const LOCAL_API = "http://localhost:5000/api";
-const RENDER_API = "https://your-render-api.onrender.com/api"; // <-- replace later
+const BASE_URLS = [
+  "https://www.backend.vertexforbcs.org/api",
+  "http://www.backend.vertexforbcs.org/api",
+  "https://backend.vertexforbcs.org/api",
+  "https://vertexfbcs.netlify.app/api",
+  "http://localhost:5000/api",
+];
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -22,13 +30,14 @@ const AuthProvider = ({ children }) => {
   const [userType, setUserType] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔧 utility to pick base URL dynamically
+  // Determine baseURL dynamically
   const baseURL =
-    window.location.hostname === "localhost" ? LOCAL_API : RENDER_API;
+    window.location.hostname === "localhost"
+      ? LOCAL_API
+      : BASE_URLS.find((url) => url.includes(window.location.hostname)) ||
+        BASE_URLS[0];
 
-  /** ------------------------
-   * 🧾 Save or fetch user from backend MongoDB
-   * ------------------------ */
+  // Sync Firebase user with backend
   const syncUserWithBackend = async (firebaseUser, extra = {}) => {
     if (!firebaseUser?.email) return null;
 
@@ -46,19 +55,59 @@ const AuthProvider = ({ children }) => {
       });
 
       const data = await res.json();
-      if (data?.userType) {
-        setUserType(data.userType);
-      } else {
-        setUserType("student");
-      }
+      setUserType(data?.userType || "student");
+      return data;
     } catch (err) {
       console.error("Error syncing user with backend:", err);
+      return null;
     }
   };
 
-  /** ------------------------
-   * ✉️ Sign up using email + password
-   * ------------------------ */
+  // Controller login (username/password)
+  const signInWithController = async (usernameOrEmail, password) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${baseURL}/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usernameOrEmail, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Login failed");
+
+      // Check if admin
+      if (data.userType !== "admin") {
+        Swal.fire({
+          icon: "warning",
+          title: "Not an Admin",
+          text: "You are not an admin. Redirecting to student login...",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          window.location.href = "/student/login";
+        });
+        return null;
+      }
+
+      setUser(data);
+      setUserType(data.userType || "admin");
+      return data;
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: err.message || "Controller login failed",
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Firebase email/password signup
   const signUpUser = async (
     email,
     password,
@@ -72,84 +121,141 @@ const AuthProvider = ({ children }) => {
         email,
         password
       );
-      if (username) {
-        await updateProfile(result.user, { displayName: username });
-      }
-
+      if (username) await updateProfile(result.user, { displayName: username });
       setUser(result.user);
       await syncUserWithBackend(result.user, { username, userType });
       return result.user;
-    } catch (error) {
-      console.error("Signup error:", error);
-      throw error;
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Signup Failed",
+        text: err.message || "Signup failed",
+      });
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  /** ------------------------
-   * 🔐 Sign in with email + password
-   * ------------------------ */
+  // Firebase email/password login
   const signInUser = async (email, password) => {
     setLoading(true);
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       setUser(result.user);
-      await syncUserWithBackend(result.user);
+      const data = await syncUserWithBackend(result.user);
+      if (data?.userType !== "admin") {
+        Swal.fire({
+          icon: "warning",
+          title: "Not an Admin",
+          text: "You are not an admin. Redirecting to student login...",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          window.location.href = "/student/login";
+        });
+        return null;
+      }
+      setUserType(data.userType || "admin");
       return result.user;
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: err.message || "Firebase login failed",
+      });
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  /** ------------------------
-   * 🟦 Google sign in / sign up
-   * ------------------------ */
+  // Google login/signup
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user);
-      await syncUserWithBackend(result.user, { userType: "student" });
+      const data = await syncUserWithBackend(result.user, {
+        userType: "student",
+      });
+
+      if (data?.userType !== "admin") {
+        Swal.fire({
+          icon: "warning",
+          title: "Not an Admin",
+          text: "You are not an admin. Redirecting to student login...",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          window.location.href = "/student/login";
+        });
+        return null;
+      }
+
+      setUserType(data.userType || "admin");
       return result.user;
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Google Login Failed",
+        text: err.message || "Google login failed",
+      });
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  /** ------------------------
-   * 🚪 Sign out
-   * ------------------------ */
+  // Sign out
   const signOutUser = async () => {
     setLoading(true);
     try {
       await signOut(auth);
       setUser(null);
       setUserType(null);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Sign Out Failed",
+        text: err.message || "Sign out failed",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  /** ------------------------
-   * 👀 Listen for auth changes
-   * ------------------------ */
+  // Listen for Firebase auth changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        await syncUserWithBackend(currentUser);
+        const data = await syncUserWithBackend(currentUser);
+        if (data?.userType !== "admin") {
+          Swal.fire({
+            icon: "warning",
+            title: "Not an Admin",
+            text: "Redirecting to student login...",
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          }).then(() => {
+            window.location.href = "/student/login";
+          });
+          return;
+        }
+        setUserType(data.userType || "admin");
       } else {
         setUserType(null);
       }
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
-  /** ------------------------
-   * 🌍 Context value
-   * ------------------------ */
   const authInfo = {
     user,
     userType,
@@ -157,13 +263,14 @@ const AuthProvider = ({ children }) => {
     signUpUser,
     signInUser,
     signInWithGoogle,
+    signInWithController,
     signOutUser,
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50">
-        <span className="loading loading-ring loading-lg text-blue-500"></span>
+      <div className="fixed inset-0 flex items-center justify-center bg-green-200 dark:bg-green-900 z-50">
+        <div className="loading loading-ring loading-xl text-green-700 dark:text-green-300"></div>
       </div>
     );
   }
