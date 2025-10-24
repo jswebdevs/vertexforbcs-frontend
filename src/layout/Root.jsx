@@ -6,7 +6,9 @@ const Root = () => {
   return (
     <div className="mx-auto font-poppins max-w-full">
       <SiteHeader></SiteHeader>
-      <Outlet></Outlet>
+      <div className="pt-20">
+        <Outlet></Outlet>
+      </div>
       <SiteFooter></SiteFooter>
     </div>
   );

@@ -33,6 +33,7 @@ import OnHold from "../pages/dashboard/Admin/StudentManage/OnHold";
 import FAQ from "../pages/FAQ";
 import TermsofService from "../pages/TermsofService";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
+import PrivateRoute from "./PrivateRoute";
 
 
 
@@ -47,46 +48,6 @@ const Routes = createBrowserRouter([
         path: "/",
         element: <Homepage></Homepage>,
       },
-      // {
-      //   path: "/admin",
-      //   element: <AdminRoot></AdminRoot>,
-      //   children: [
-      //     {
-      //       path: "dashboard",
-      //       element: <AdminDashboard></AdminDashboard>,
-      //     },
-      //     {
-      //       path: "manage-students",
-      //       element: <AdminStudentManage></AdminStudentManage>,
-      //     },
-      //     {
-      //       path: "manage-courses",
-      //       element: <AdminCourseManage></AdminCourseManage>,
-      //     },
-      //     {
-      //       path: "manage-courses/:courseTitle",
-      //       element: <AdminSingleCourse></AdminSingleCourse>,
-      //     },
-      //     {
-      //       path: "account",
-      //       element: <AdminProfile></AdminProfile>,
-      //     },
-      //     {
-      //       path: "onhold",
-      //       element: <OnHold></OnHold>
-      //     },
-      //     {
-      //       path: "site-settings",
-      //       element: <SiteSettings></SiteSettings>,
-      //       children: [
-      //         {
-      //           path: "slider",
-      //           element: <Sliders></Sliders>,
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // },
       {
         path: "/admin/login",
         element: <AdminLogin></AdminLogin>,
@@ -99,28 +60,7 @@ const Routes = createBrowserRouter([
         path: "/student/register",
         element: <StudentRegister></StudentRegister>,
       },
-      // {
-      //   path: "/student",
-      //   element: <StudentRoot></StudentRoot>,
-      //   children: [
-      //     {
-      //       path: "dashboard",
-      //       element: <StudentDashboard></StudentDashboard>,
-      //     },
-      //     {
-      //       path: "courses",
-      //       element: <StudentCourses></StudentCourses>,
-      //     },
-      //     {
-      //       path: "account",
-      //       element: <StudentProfile></StudentProfile>,
-      //     },
-      //     {
-      //       path: "quizzes",
-      //       element: <StudentQuizzes></StudentQuizzes>
-      //     }
-      //   ],
-      // },
+  
       {
         path: "about",
         element: <AboutUsPage></AboutUsPage>,
@@ -160,6 +100,16 @@ const Routes = createBrowserRouter([
       {
         path: "privacy",
         element: <PrivacyPolicy></PrivacyPolicy>
+      },
+      {
+        path: "student",
+        element: <PrivateRoute><StudentRoot></StudentRoot></PrivateRoute>,
+        children: [
+          {
+            path: "dashboard",
+            element: <StudentDashboard></StudentDashboard>
+          }
+        ]
       }
     ],
   },
